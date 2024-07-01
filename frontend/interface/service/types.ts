@@ -8,7 +8,7 @@ export interface VergeConfig {
   theme_blur?: boolean;
   traffic_graph?: boolean;
   enable_memory_usage?: boolean;
-  page_transition_animation?: string;
+  lighten_animation_effects?: boolean;
   enable_auto_check_update?: boolean;
   enable_tun_mode?: boolean;
   enable_auto_launch?: boolean;
@@ -121,4 +121,81 @@ export interface Proxies {
   records: {
     [key: string]: Clash.Proxy;
   };
+}
+
+export namespace Connection {
+  export interface Item {
+    id: string;
+    metadata: Metadata;
+    upload: number;
+    download: number;
+    start: string;
+    chains: string[];
+    rule: string;
+    rulePayload: string;
+  }
+
+  export interface Metadata {
+    network: string;
+    type: string;
+    host: string;
+    sourceIP: string;
+    sourcePort: string;
+    destinationPort: string;
+    destinationIP?: string;
+    destinationIPASN?: string;
+    process?: string;
+    processPath?: string;
+    dnsMode?: string;
+    dscp?: number;
+    inboundIP?: string;
+    inboundName?: string;
+    inboundPort?: string;
+    inboundUser?: string;
+    remoteDestination?: string;
+    sniffHost?: string;
+    specialProxy?: string;
+    specialRules?: string;
+  }
+
+  export interface Response {
+    downloadTotal: number;
+    uploadTotal: number;
+    memory?: number;
+    connections?: Item[];
+  }
+}
+
+export interface LogMessage {
+  type: string;
+  time?: string;
+  payload: string;
+}
+
+export interface ProviderRules {
+  behavior: string;
+  format: string;
+  name: string;
+  ruleCount: number;
+  type: string;
+  updatedAt: string;
+  vehicleType: string;
+}
+
+export interface ProviderItem {
+  name: string;
+  type: string;
+  proxies: Clash.Proxy[];
+  updatedAt: string;
+  vehicleType: string;
+}
+
+export interface Traffic {
+  up: number;
+  down: number;
+}
+
+export interface Memory {
+  inuse: number;
+  oslimit: number;
 }

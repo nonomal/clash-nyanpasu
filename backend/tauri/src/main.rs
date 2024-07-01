@@ -50,11 +50,11 @@ fn main() -> std::io::Result<()> {
     commands::parse().unwrap();
 
     // Should be in first place in order prevent single instance check block everything
-    tauri_plugin_deep_link::prepare(if cfg!(feature = "verge-dev") {
-        "moe.elaina.clash.nyanpasu.dev"
-    } else {
-        "moe.elaina.clash.nyanpasu"
-    });
+    #[cfg(feature = "verge-dev")]
+    tauri_plugin_deep_link::prepare("moe.elaina.clash.nyanpasu.dev");
+
+    #[cfg(not(feature = "verge-dev"))]
+    tauri_plugin_deep_link::prepare("moe.elaina.clash.nyanpasu");
 
     // 单例检测
     let single_instance_result = utils::init::check_singleton();
@@ -142,6 +142,7 @@ fn main() -> std::io::Result<()> {
             // updater
             cmds::fetch_latest_core_versions,
             cmds::update_core,
+            cmds::inspect_updater,
             cmds::get_core_version,
             // utils
             cmds::collect_logs,

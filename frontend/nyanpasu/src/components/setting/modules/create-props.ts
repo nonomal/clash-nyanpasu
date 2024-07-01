@@ -89,9 +89,9 @@ export const nyanpasu = {
     }
 
     return {
-      checked: nyanpasuConfig?.[propName] || false,
-      onChange: () => {
-        setNyanpasuConfig({ [propName]: !nyanpasuConfig?.[propName] });
+      checked: (nyanpasuConfig?.[propName] as boolean) || false,
+      onChange: async () => {
+        await setNyanpasuConfig({ [propName]: !nyanpasuConfig?.[propName] });
       },
     };
   },

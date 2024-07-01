@@ -29,11 +29,27 @@ export const getRuntimeExists = async () => {
   return await invoke<string[]>("get_runtime_exists");
 };
 
+export const getRuntimeLogs = async () => {
+  return await invoke<Record<string, [string, string][]>>("get_runtime_logs");
+};
+
 export const createProfile = async (
   item: Partial<Profile.Item>,
   fileData?: string | null,
 ) => {
   return await invoke<void>("create_profile", { item, fileData });
+};
+
+export const updateProfile = async (uid: string, option?: Profile.Option) => {
+  return await invoke<void>("update_profile", { index: uid, option });
+};
+
+export const deleteProfile = async (uid: string) => {
+  return await invoke<void>("delete_profile", { index: uid });
+};
+
+export const viewProfile = async (uid: string) => {
+  return await invoke<void>("view_profile", { index: uid });
 };
 
 export const getProfiles = async () => {
@@ -57,6 +73,16 @@ export const readProfileFile = async (index: string) => {
 
 export const saveProfileFile = async (index: string, fileData: string) => {
   return await invoke<void>("save_profile_file", { index, fileData });
+};
+
+export const importProfile = async (
+  url: string,
+  option: Profile.Option = { with_proxy: true },
+) => {
+  return await invoke<void>("import_profile", {
+    url,
+    option,
+  });
 };
 
 export const getCoreVersion = async (
@@ -155,4 +181,8 @@ export const selectProxy = async (group: string, name: string) => {
 
 export const updateProxyProvider = async (name: string) => {
   return await invoke<void>("update_proxy_provider", { name });
+};
+
+export const save_window_size_state = async () => {
+  return await invoke<void>("save_window_size_state");
 };

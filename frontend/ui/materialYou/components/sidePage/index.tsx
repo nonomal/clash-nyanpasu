@@ -12,6 +12,7 @@ interface Props {
   children?: ReactNode;
   sideBar?: ReactNode;
   side?: ReactNode;
+  sideClassName?: string;
   toolBar?: ReactNode;
   noChildrenScroll?: boolean;
   flexReverse?: boolean;
@@ -43,6 +44,7 @@ export const SidePage: FC<Props> = ({
   children,
   sideBar,
   side,
+  sideClassName,
   toolBar,
   noChildrenScroll,
   flexReverse,
@@ -68,6 +70,7 @@ export const SidePage: FC<Props> = ({
                 open: {
                   opacity: 1,
                   maxWidth: "348px",
+                  minWidth: "192px",
                   display: "flex",
                 },
                 closed: {
@@ -82,7 +85,7 @@ export const SidePage: FC<Props> = ({
               {sideBar && <div>{sideBar}</div>}
 
               <div className={style["LeftContainer-Content"]}>
-                <section>{side}</section>
+                <section className={sideClassName}>{side}</section>
               </div>
             </motion.div>
 
