@@ -1,8 +1,33 @@
 {
-  "compilerOptions": {
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-  },
-  "include": ["./frontend/**/tsconfig.json", "./scripts/updater.ts"],
-  "exclude": ["node_modules"],
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./frontend/constants",
+    },
+    {
+      "path": "./frontend/utils",
+    },
+    {
+      "path": "./frontend/hooks",
+    },
+    {
+      "path": "./frontend/platform",
+    },
+    {
+      "path": "./frontend/rpc",
+    },
+    {
+      "path": "./frontend/query",
+    },
+    {
+      "path": "./frontend/theme",
+    },
+    {
+      "path": "./frontend/ui",
+    },
+    {
+      "path": "./frontend/nyanpasu",
+    },
+  ],
 }

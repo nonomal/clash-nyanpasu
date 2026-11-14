@@ -1,13 +1,17 @@
-/**
- * classNames filter out falsy values and join the rest with a space
- * @param classes - array of classes
- * @returns string of classes
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import { isIpcError, rpcDomainError, RpcFailure } from '@nyanpasu/rpc'
+import { ipcErrorMessage } from './ipc-error'
+import type { ProfileLabel } from './profile-label'
 
 export async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/** The simplest message for a caught error; the original goes to "copy error details". */
+export function formatError(err: unknown, profileLabel?: ProfileLabel): string {
+  const domain = err instanceof RpcFailure ? rpcDomainError(err) : err
+
+  if (isIpcError(domain)) {
+    return ipcErrorMessage(domain, profileLabel)
+  }
+  return err instanceof Error ? err.message : String(err)
 }

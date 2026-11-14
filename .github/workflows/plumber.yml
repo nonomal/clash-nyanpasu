@@ -1,0 +1,69 @@
+name: '[CI] Check Workflow Security with Plumber'
+
+# Plumber reads the GitHub API through the repository's GITHUB_TOKEN,
+# whose hourly quota every workflow run shares. Run on every push, bursts
+# of Renovate rebases ran that quota out and failed the attestation check
+# in its install step, so it runs only when its inputs change. The weekly
+# run catches newly published advisories and repository setting changes
+# that no file change triggers.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+      - '.plumber.yaml'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.plumber.yaml'
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  plumber:
+    name: Plumber
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Lets Plumber read the workflow states and one run log to prove
+      # the token scope, the action documents it.
+      actions: read
+      security-events: write
+      # Lets the action publish the score to the badge service, no secret involved.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # A token from a dedicated read-only GitHub App gives Plumber its own
+      # API quota instead of the GITHUB_TOKEN quota that every workflow run
+      # shares. It covers the same reads the job token allows. Pull
+      # requests from forks get no secrets and fall back to the job token,
+      # as does every run until the app is configured.
+      - name: Create Plumber API token
+        id: plumber-token
+        if: vars.PLUMBER_APP_CLIENT_ID != '' && github.event.pull_request.head.repo.fork != true
+        uses: actions/create-github-app-token@v3.3.0
+        with:
+          client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
+          permission-actions: read
+          permission-contents: read
+
+      - uses: getplumber/plumber@v0.7.23
+        with:
+          github-token: ${{ steps.plumber-token.outputs.token || github.token }}
+          # Code scanning upload needs security-events write, which PRs
+          # from forks do not get. The report stays available as a
+          # workflow artifact there.
+          upload-sarif: ${{ github.event.pull_request.head.repo.fork != true }}
+          # Gate at 85 points instead of the all-or-nothing default,
+          # leaves room for a small finding without blocking PRs.
+          min-points: 85
+          score-push: true
